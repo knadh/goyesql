@@ -9,7 +9,7 @@ This is based on [nleof/goyesql](https://github.com/nleof/goyesql) but is not co
 # Installation
 
 ```
-$ go get -u github.com/nleof/goyesql
+$ go get -u github.com/knadh/goyesql
 ```
 
 # Usage
@@ -48,7 +48,7 @@ You can use [bindata](https://github.com/jteeuwen/go-bindata) and `ParseBytes` f
 package main
 
 import (
-	"github.com/nleof/goyesql"
+	"github.com/knadh/goyesql"
 )
 
 func main() {
