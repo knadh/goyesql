@@ -6,10 +6,11 @@ import (
 
 func TestParseLine(t *testing.T) {
 	tests := map[string]parsedLine{
-		" ":              {lineBlank, ""},
-		" SELECT * ":     {lineQuery, "SELECT *"},
-		" -- name: tag ": {lineTag, "tag"},
-		" -- comment ":   {lineComment, "comment"},
+		" ":                {lineBlank, "", ""},
+		" SELECT * ":       {lineQuery, "", "SELECT *"},
+		" -- name: tag ":   {lineTag, "name", "tag"},
+		" -- some: param ": {lineTag, "some", "param"},
+		" -- comment ":     {lineComment, "", "comment"},
 	}
 
 	for line, expected := range tests {

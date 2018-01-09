@@ -2,67 +2,93 @@ package goyesql
 
 import (
 	"bufio"
-	"errors"
+	"fmt"
 	"io"
 )
 
-var (
-	// ErrTagMissing occurs when a query has no tag
-	ErrTagMissing = errors.New("Query without tag")
-
-	// ErrTagOverwritten occurs when a tag is overwritten by a new one
-	ErrTagOverwritten = errors.New("Tag overwritten")
+const (
+	tagName = "name"
 )
 
-// Tag is a string prefixing a Query
-type Tag string
+// Err represents an error.
+type Err struct {
+	err string
+}
+
+func (e Err) Error() string {
+	return fmt.Sprintf(e.err)
+}
+
+// Query is a parsed query along with tags.
+type Query struct {
+	Query string
+	Tags  map[string]string
+}
 
 // Queries is a map associating a Tag to its Query
-type Queries map[Tag]string
+type Queries map[string]*Query
 
 // ParseReader takes an io.Reader and returns Queries or an error.
 func ParseReader(reader io.Reader) (Queries, error) {
 	var (
-		lastTag  Tag
-		lastLine parsedLine
+		nameTag string
+		queries = make(Queries)
+		scanner = bufio.NewScanner(reader)
 	)
-
-	queries := make(Queries)
-	scanner := bufio.NewScanner(reader)
 
 	for scanner.Scan() {
 		line := parseLine(scanner.Text())
 
 		switch line.Type {
-
 		case lineBlank, lineComment:
-			// we don't care about blank and comment lines
+			// Ignore.
 			continue
 
 		case lineQuery:
-			// got a query but no tag before
-			if lastTag == "" {
-				return nil, ErrTagMissing
+			// Got a query but no preceding name tag.
+			if nameTag == "" {
+				return nil, Err{fmt.Sprintf("Query is missing the 'name' tag: %s", line.Value)}
 			}
 
-			query := line.Value
-			// if query is multiline
-			if queries[lastTag] != "" {
-				query = " " + query
+			q := line.Value
+
+			// If query is multiline.
+			if queries[nameTag].Query != "" {
+				q = " " + q
 			}
-			queries[lastTag] += query
+
+			queries[nameTag].Query += q
 
 		case lineTag:
-			// got a tag after another tag
-			if lastLine.Type == lineTag {
-				return nil, ErrTagOverwritten
+			// Has this name already been read?
+			if line.Tag == tagName {
+				nameTag = line.Value
+
+				if _, ok := queries[nameTag]; ok {
+					return nil, Err{fmt.Sprintf("Duplicate tag %s = %s ", line.Tag, line.Value)}
+				}
+
+				queries[nameTag] = &Query{Tags: make(map[string]string)}
+			} else {
+				// Is there a name tag for this query?
+				if _, ok := queries[nameTag]; !ok {
+					return nil, Err{"'name' should be the first tag"}
+				}
+
+				// Has this tag already been used on this query?
+				if _, ok := queries[nameTag].Tags[line.Tag]; ok {
+					return nil, Err{fmt.Sprintf("Duplicate tag %s = %s ", line.Tag, line.Value)}
+				}
+
+				queries[nameTag].Tags[line.Tag] = line.Value
 			}
-
-			lastTag = Tag(line.Value)
-
 		}
+	}
 
-		lastLine = line
+	for name, q := range queries {
+		if q.Query == "" {
+			return nil, Err{fmt.Sprintf("'%s' is missing query", name)}
+		}
 	}
 
 	if err := scanner.Err(); err != nil {

@@ -1,13 +1,10 @@
-[![Build Status](https://travis-ci.org/nleof/goyesql.svg)](https://travis-ci.org/nleof/goyesql)
-[![GoDoc](https://godoc.org/github.com/nleof/goyesql?status.svg)](https://godoc.org/github.com/nleof/goyesql)
-[![Go Report Card](https://goreportcard.com/badge/github.com/nleof/goyesql)](https://goreportcard.com/report/github.com/nleof/goyesql)
-
 # goyesql
 
 Golang + [Yesql](https://github.com/krisajenkins/yesql)
 
 Parse a file and associate SQL queries to a map. Useful for separating SQL from code logic.
 
+This is based on [nleof/goyesql](https://github.com/nleof/goyesql) but is not compatible with the original repository. This library introduces arbitrary tag types and changes structs and error types.
 
 # Installation
 
@@ -23,6 +20,8 @@ Create a file containing your SQL queries
 -- queries.sql
 
 -- name: list
+-- some: param
+-- some_other: param
 SELECT *
 FROM foo;
 
@@ -37,9 +36,9 @@ And just call them in your code!
 ```go
 queries := goyesql.MustParseFile("queries.sql")
 // use queries["list"] with sql/database, sqlx ...
+// queries["list"].Query is the parsed SQL query string
+// queries["list"].Query is the list of arbitrary tags (some=param, some_other=param)
 ```
-
-Enjoy!
 
 # Embedding
 

@@ -5,18 +5,10 @@ import (
 )
 
 func TestScannerErrTags(t *testing.T) {
-	tests := map[string]error{
-		"missing":  ErrTagMissing,
-		"doubloon": ErrTagOverwritten,
-	}
-
-	for key, expectedErr := range tests {
+	for _, key := range []string{"missing", "doubloon"} {
 		_, err := ParseFile("tests/samples/tag_" + key + ".sql")
-		if err != expectedErr {
-			t.Errorf(
-				"A %s tag should return a '%v' error, got '%v'",
-				key, expectedErr, err,
-			)
+		if err == nil {
+			t.Errorf("Expected error, but got nil.")
 		}
 	}
 }
@@ -30,9 +22,9 @@ func TestScannerValid(t *testing.T) {
 	}
 
 	expectedQueries := Queries{
-		"simple":    "SELECT * FROM simple;",
-		"multiline": "SELECT * FROM multiline WHERE line = 42;",
-		"comments":  "SELECT * FROM comments;",
+		"simple":    &Query{Query: "SELECT * FROM simple;"},
+		"multiline": &Query{Query: "SELECT * FROM multiline WHERE line = 42;"},
+		"comments":  &Query{Query: "SELECT * FROM comments;"},
 	}
 
 	if len(queries) != len(expectedQueries) {
@@ -42,8 +34,13 @@ func TestScannerValid(t *testing.T) {
 		)
 	}
 
+	if len(queries["simple"].Tags) != 1 ||
+		queries["simple"].Tags["raw"] != "1" {
+		t.Errorf("Tag 'raw = 1' not found in 'simple' valid query")
+	}
+
 	for key, expectedQuery := range expectedQueries {
-		if queries[key] != expectedQuery {
+		if queries[key].Query != expectedQuery.Query {
 			t.Errorf(
 				"%s query should be '%s', got '%s'",
 				key, expectedQuery, queries[key],

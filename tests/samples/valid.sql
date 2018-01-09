@@ -1,4 +1,5 @@
 -- name: simple
+-- raw: 1
 SELECT * FROM simple;
 
 -- name: multiline
