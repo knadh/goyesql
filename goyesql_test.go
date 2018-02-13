@@ -40,6 +40,31 @@ func TestMustParseBytesNoPanic(t *testing.T) {
 	MustParseBytes([]byte("-- name: byte-me\nSELECT * FROM bytes;"))
 }
 
+func TestScanToStruct(t *testing.T) {
+	type Q struct {
+		Ignore   string
+		RawQuery string `query:"multiline"`
+	}
+	type Q2 struct {
+		RawQuery string `query:"does-not-exist"`
+	}
+	var (
+		q  Q
+		q2 Q2
+	)
+
+	queries := MustParseFile("tests/samples/valid.sql")
+	err := ScanToStruct(&q, queries, nil)
+	if err != nil {
+		t.Errorf("failed to scan raw query to struct: %v", err)
+	}
+
+	err = ScanToStruct(&q2, queries, nil)
+	if err == nil {
+		t.Error("expected to fail at non-existent query 'does-not-exist' but didn't")
+	}
+}
+
 func BenchmarkMustParseFile(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		MustParseFile("tests/samples/valid.sql")
