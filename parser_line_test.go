@@ -11,6 +11,7 @@ func TestParseLine(t *testing.T) {
 		" -- name: tag ":   {lineTag, "name", "tag"},
 		" -- some: param ": {lineTag, "some", "param"},
 		" -- comment ":     {lineComment, "", "comment"},
+		" --":              {lineComment, "", ""},
 	}
 
 	for line, expected := range tests {

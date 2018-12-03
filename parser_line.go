@@ -27,7 +27,7 @@ var (
 	reTag = regexp.MustCompile("^\\s*--\\s*(.+)\\s*:\\s*(.+)")
 
 	// -- $comment
-	reComment = regexp.MustCompile("^\\s*--\\s*(.+)")
+	reComment = regexp.MustCompile("^\\s*--\\s*(.*)")
 )
 
 func parseLine(line string) parsedLine {
