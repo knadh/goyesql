@@ -35,7 +35,7 @@ And just call them in your code!
 queries := goyesql.MustParseFile("queries.sql")
 // use queries["list"] with sql/database, sqlx ...
 // queries["list"].Query is the parsed SQL query string
-// queries["list"].Query is the list of arbitrary tags (some=param, some_other=param)
+// queries["list"].Tags is the list of arbitrary tags (some=param, some_other=param)
 ```
 
 ## Scanning
