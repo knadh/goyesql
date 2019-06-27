@@ -1,10 +1,8 @@
 # goyesql
 
-Golang + [Yesql](https://github.com/krisajenkins/yesql)
+> This package is based on [nleof/goyesql](https://github.com/nleof/goyesql) but is not compatible with it any more. This package introduces support for arbitrary tag types and changes structs and error types.
 
-Parse a file and associate SQL queries to a map. Useful for separating SQL from code logic.
-
-This is based on [nleof/goyesql](https://github.com/nleof/goyesql) but is not compatible with the original repository. This library introduces arbitrary tag types and changes structs and error types.
+Parses a file and associate SQL queries to a map. Useful for separating SQL from code logic.
 
 # Installation
 
@@ -41,7 +39,8 @@ queries := goyesql.MustParseFile("queries.sql")
 ```
 
 ## Scanning
-Often, it's necessary to scan multiple queries from a SQL file, prepare them into *sql.Stmt and use them throught the application. goyesql comes with a helper function that helps with this. Given a goyesql map of queries, it can turn the queries into prepared statements and scan them into a struct that can be passed around.
+
+Often, it's necessary to scan multiple queries from a SQL file, prepare them into \*sql.Stmt and use them throught the application. goyesql comes with a helper function that helps with this. Given a goyesql map of queries, it can turn the queries into prepared statements and scan them into a struct that can be passed around.
 
 ```go
 type MyQueries struct {
@@ -65,23 +64,5 @@ if err != nil {
 ```
 
 ## Embedding
-You can use [bindata](https://github.com/jteeuwen/go-bindata) and `ParseBytes` func for embedding your queries in your binary.
 
-```go
-package main
-
-import (
-	"github.com/knadh/goyesql"
-)
-
-func main() {
-	data := MustAsset("resources/sql/foo.sql")
-	queries := goyesql.MustParseBytes(data)
-	// your turn
-}
-```
-
-```sh
-go-bindata resources/...
-go run main.go bindata.go
-```
+You can use [stuffbin](https://github.com/knadh/stuffbin) and `ParseBytes()` for embedding SQL queries in your binary.
