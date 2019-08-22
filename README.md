@@ -43,7 +43,7 @@ queries := goyesql.MustParseFile("queries.sql")
 Often, it's necessary to scan multiple queries from a SQL file, prepare them into \*sql.Stmt and use them throught the application. goyesql comes with a helper function that helps with this. Given a goyesql map of queries, it can turn the queries into prepared statements and scan them into a struct that can be passed around.
 
 ```go
-type MyQueries struct {
+type MySQLQueries struct {
 	// This will be prepared.
 	List *sql.Stmt `query:"list"`
 
@@ -51,10 +51,28 @@ type MyQueries struct {
 	Get  string    `query:"get"`
 }
 
-var q MyQueries
+type MySQLxQueries struct {
+	// These will be prepared.
+	List *sqlx.Stmt `query:"list"`
+	NamedList *sqlx.NamedStmt `query:"named_list"`
+
+	// This will not be prepared.
+	Get  string    `query:"get"`
+}
+
+var (
+	q  MySQLQueries
+	qx MySQLxQueries
+)
 
 // Here, db (*sql.DB) is your live DB connection.
 err := goyesql.ScanToStruct(&q, queries, db)
+if err != nil {
+	log.Fatal(err)
+}
+
+// Here, db (*sqlx.DB) is your live DB connection.
+err := goyesqlx.ScanToStruct(&qx, queries, db)
 if err != nil {
 	log.Fatal(err)
 }
