@@ -1,4 +1,4 @@
-package goyesqlx
+package sqlx
 
 import (
 	"fmt"
@@ -6,9 +6,12 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/knadh/goyesql"
+	"github.com/knadh/goyesql/v2"
 )
 
+// ScanToStruct prepares a given set of Queries and assigns the resulting
+// *sqlx.Stmt or *sqlx.NamedStmt statements to the fields of a given struct, matching based on the name
+// in the `query` tag in the struct field names.
 func ScanToStruct(obj interface{}, q goyesql.Queries, db *sqlx.DB) error {
 	ob := reflect.ValueOf(obj)
 	if ob.Kind() == reflect.Ptr {
