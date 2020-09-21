@@ -1,3 +1,5 @@
+<a href="https://zerodha.tech"><img src="https://zerodha.tech/static/images/github-badge.svg" align="right" /></a>
+
 # goyesql
 
 > This package is based on [nleof/goyesql](https://github.com/nleof/goyesql) but is not compatible with it any more. This package introduces support for arbitrary tag types and changes structs and error types.
