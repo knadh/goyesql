@@ -9,7 +9,7 @@ Parses a file and associate SQL queries to a map. Useful for separating SQL from
 # Installation
 
 ```
-$ go get -u github.com/knadh/goyesql
+$ go get -u github.com/knadh/goyesql/v2
 ```
 
 ## Usage
