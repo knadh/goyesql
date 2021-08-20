@@ -4,6 +4,5 @@ go 1.12
 
 require (
 	github.com/jmoiron/sqlx v1.2.0
-	github.com/knadh/goyesql v2.0.0+incompatible // indirect
 	google.golang.org/appengine v1.6.5 // indirect
 )
